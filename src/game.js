@@ -15,29 +15,36 @@ class Player{
     }
 }
 
-const addPlayer = ({gameID , name , playerID}) => {
-    if(!games[gameID]){
+const addPlayer = ({ gameID, name, playerID }) => {
+    if (!games[gameID]) {
         const color = Math.random() <= 0.5 ? 'w' : 'b';
-        const player = new Player(name,color,playerID,gameID);
+        const player = new Player(name, color, playerID, gameID);
         games[gameID] = [player];
-        return{
-            message : "Joined successfully",
-            opponent : null ,
+        return {
+            message: "Joined successfully",
+            opponent: null,
             player,
         };
     }
 
-    if(games[gameID].length >= 2){
-        return {error : "This game is full"};
+    // Check if a player with the same playerID already exists in the game
+    const existingPlayer = games[gameID].find(player => player.playerID === playerID);
+    if (existingPlayer) {
+        return { error: "Player with the same socket.id already exists in the game." };
+    }
+
+    if (games[gameID].length >= 2) {
+        return { error: "This game is full" };
     }
 
     const opponent = games[gameID][0];
-    const color = opponent.color === 'w' ? 'b' : 'w' ;
-    const player = new Player(name,color,playerID,gameID);
+    const color = opponent.color === 'w' ? 'b' : 'w';
+    const player = new Player(name, color, playerID, gameID);
     games[gameID].push(player);
+    console.log("rooms : " , games)
 
-    return{
-        message:"Added Successfully",
+    return {
+        message: "Added Successfully",
         opponent,
         player,
     };
